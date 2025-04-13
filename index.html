@@ -1,0 +1,80 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarpoStudio Photobooth</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #frame {
+      position: relative;
+      width: 360px;
+      height: 1080px;
+      background-image: url('CarpoStudio.png');
+      background-size: cover;
+    }
+    video, canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 360px;
+      height: 1080px;
+      object-fit: cover;
+    }
+    #controls {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="frame">
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+  </div>
+  <div id="controls">
+    <button id="snap">Ambil Foto</button>
+    <a id="downloadLink" style="display:none" download="CarpoStudio_Photo.png">Download Foto</a>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const snap = document.getElementById('snap');
+    const downloadLink = document.getElementById('downloadLink');
+    const context = canvas.getContext('2d');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        video.srcObject = stream;
+      })
+      .catch((err) => {
+        console.error("Akses kamera ditolak", err);
+      });
+
+    snap.addEventListener('click', () => {
+      canvas.style.display = 'block';
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const image = canvas.toDataURL('image/png');
+      downloadLink.href = image;
+      downloadLink.style.display = 'inline-block';
+      downloadLink.textContent = 'Download Foto';
+    });
+  </script>
+</body>
+</html>
